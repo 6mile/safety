@@ -1,22 +1,17 @@
-name: Bandit Scan
+name: Bandit
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
-  rule_check:
+  analyze:
     runs-on: ubuntu-latest
+    permissions:
+      # required for all workflows
+      security-events: write
+      # only required for workflows in private repositories
+      actions: read
+      contents: read
     steps:
-      - uses: actions/checkout@v3
-      - name: Run Bandit Scan
-        id: bandit
-        uses: mdegis/bandit-action@v1.0
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          path: "."
-          level: medium
-          confidence: medium
-          args: "-v"
-          exit_zero: true
+      - name: Perform Bandit Analysis
+        uses: PyCQA/bandit-action@v1
